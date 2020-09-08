@@ -1,0 +1,46 @@
+version: "3.7"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    environment:
+      TZ: 'CHANGEME'
+      WEBPASSWORD: 'CHANGEME'
+      ServerIP: 192.168.8.4
+      DNS1: 208.67.222.222
+      DNS2: 208.67.220.220
+      DNSSEC: "true"
+      CONDITIONAL_FORWARDING: "true"
+      CONDITIONAL_FORWARDING_IP: 192.168.8.1
+      CONDITIONAL_FORWARDING_DOMAIN: localdomain
+      CONDITIONAL_FORWARDING_REVERSE: 8.168.192.in-addr.arpa
+    # Volumes store your data between container upgrades
+    volumes:
+      - 'pihole:/etc/pihole/'
+      - 'dnsmasq:/etc/dnsmasq.d/'
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    networks:
+      macvlan:
+        ipv4_address: 192.168.8.4
+
+volumes:
+  pihole:
+  dnsmasq:
+
+networks:
+  macvlan:
+    driver: macvlan
+    driver_opts:
+      parent: eth1
+    ipam:
+      config:
+        - subnet: 192.168.8.0/24
