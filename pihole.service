@@ -11,8 +11,8 @@ RestartSec=10
 
 WorkingDirectory=/opt/pihole
 
-ExecStartPre=-/usr/local/bin/docker compose kill
-ExecStartPre=-/usr/local/bin/docker compose rm -f
+ExecStartPre=-/usr/bin/docker compose kill
+ExecStartPre=-/usr/bin/docker compose rm -f
 
 ExecStartPre=/sbin/ip link add shim link eth0 type macvlan mode bridge
 ExecStartPre=/sbin/ip addr add 192.168.8.20/24 dev shim
@@ -21,9 +21,9 @@ ExecStartPre=/sbin/ip route add 192.168.8.4/32 dev shim
 
 ExecStopPost=/sbin/ip link del shim link eth0 type macvlan mode bridge
 
-ExecStart=/usr/local/bin/docker compose up --force-recreate
+ExecStart=/usr/bin/docker compose up --force-recreate
 
-ExecStop=/usr/local/bin/docker compose stop
+ExecStop=/usr/bin/docker compose stop
 
 [Install]
 WantedBy=multi-user.target
