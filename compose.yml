@@ -1,5 +1,3 @@
-version: "3.7"
-
 # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
 services:
   pihole:
@@ -8,15 +6,13 @@ services:
     environment:
       TZ: 'CHANGEME'
       WEBPASSWORD: 'CHANGEME'
-      ServerIP: 192.168.8.4
-      DNS1: 208.67.222.222
-      DNS2: 208.67.220.220
+      FTLCONF_REPLY_ADDR4: 192.168.8.4
+      PIHOLE_DNS_: 127.0.0.1#5053
       DNSSEC: "true"
-      CONDITIONAL_FORWARDING: "true"
-      CONDITIONAL_FORWARDING_IP: 192.168.8.1
-      CONDITIONAL_FORWARDING_DOMAIN: localdomain
-      CONDITIONAL_FORWARDING_REVERSE: 8.168.192.in-addr.arpa
-    # Volumes store your data between container upgrades
+      REV_SERVER: "true"
+      REV_SERVER_TARGET: 192.168.8.1
+      REV_SERVER_DOMAIN: localdomain
+      REV_SERVER_CIDR: 192.168.8.0/24
     volumes:
       - 'pihole:/etc/pihole/'
       - 'dnsmasq:/etc/dnsmasq.d/'
@@ -27,10 +23,20 @@ services:
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN
-    restart: unless-stopped
+    restart: always
     networks:
       macvlan:
         ipv4_address: 192.168.8.4
+
+  proxy-dns:
+    build:
+      context: .
+      dockerfile: Dockerfile.cloudflared
+    command: proxy-dns --port=5053
+    environment:
+      TUNNEL_DNS_UPSTREAM: CHANGEME
+    restart: always
+    network_mode: "container:pihole"
 
 volumes:
   pihole:
@@ -40,7 +46,7 @@ networks:
   macvlan:
     driver: macvlan
     driver_opts:
-      parent: eth1
+      parent: eth0
     ipam:
       config:
         - subnet: 192.168.8.0/24
