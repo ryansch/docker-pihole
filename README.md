@@ -45,7 +45,7 @@ Pull up https://github.com/pi-hole/docker-pi-hole#environment-variables so you c
 cd /opt/pihole
 # Replace the CHANGEME items in compose.yml. You probably want to set up Cloudflare Zero Trust to grab the TUNNEL_DNS_UPSTREAM.
 # You should also change the 192.168.8.x subnet with the one your server/pi is running on. Make sure to set the macvlan ip (192.168.8.4 in this example) to something outside of your dhcp range.
-docker compose up -d
+sudo systemctl enable --now /opt/pihole/pihole.service
 docker compose logs -f
 # Your pihole should be up and sending dns request through DoH to cloudflare!
 ```
