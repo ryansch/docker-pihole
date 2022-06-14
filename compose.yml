@@ -32,7 +32,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.cloudflared
-    command: proxy-dns --port=5053
+    command: proxy-dns --port=5053 --max-upstream-conns 50
     environment:
       TUNNEL_DNS_UPSTREAM: CHANGEME
     restart: always
