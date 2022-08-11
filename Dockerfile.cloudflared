@@ -1,7 +1,7 @@
 FROM ubuntu:jammy
 LABEL maintainer="Ryan Schlesinger <ryan@ryanschlesinger.com>"
 
-ARG CLOUDFLARED_VERSION=2022.7.1
+ARG CLOUDFLARED_VERSION=2022.8.0
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
