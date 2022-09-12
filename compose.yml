@@ -1,18 +1,30 @@
 # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+#
+# Example .env:
+# TZ=CHANGEME
+# MACVLAN_IPV4_ADDRESS=CHANGEME
+# MACVLAN_IPV4_SUBNET=CHANGEME
+# FTLCONF_LOCAL_IPV4=CHANGEME
+# REV_SERVER_TARGET=CHANGEME
+# REV_SERVER_DOMAIN=lan
+# REV_SERVER_CIDR=CHANGEME
+# WEBPASSWORD=CHANGEME
+# TUNNEL_DNS_UPSTREAM=CHANGEME
+
 services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     environment:
-      TZ: 'CHANGEME'
-      WEBPASSWORD: 'CHANGEME'
-      FTLCONF_REPLY_ADDR4: 192.168.8.4
+      TZ:
+      WEBPASSWORD:
+      FTLCONF_LOCAL_IPV4:
       PIHOLE_DNS_: 127.0.0.1#5053
       DNSSEC: "true"
       REV_SERVER: "true"
-      REV_SERVER_TARGET: 192.168.8.1
-      REV_SERVER_DOMAIN: localdomain
-      REV_SERVER_CIDR: 192.168.8.0/24
+      REV_SERVER_TARGET:
+      REV_SERVER_DOMAIN:
+      REV_SERVER_CIDR:
     volumes:
       - 'pihole:/etc/pihole/'
       - 'dnsmasq:/etc/dnsmasq.d/'
@@ -26,7 +38,7 @@ services:
     restart: always
     networks:
       macvlan:
-        ipv4_address: 192.168.8.4
+        ipv4_address: ${MACVLAN_IPV4_ADDRESS}
 
   proxy-dns:
     build:
@@ -34,7 +46,7 @@ services:
       dockerfile: Dockerfile.cloudflared
     command: proxy-dns --port=5053 --max-upstream-conns 50
     environment:
-      TUNNEL_DNS_UPSTREAM: CHANGEME
+      TUNNEL_DNS_UPSTREAM:
     restart: always
     network_mode: "container:pihole"
 
@@ -49,4 +61,4 @@ networks:
       parent: eth0
     ipam:
       config:
-        - subnet: 192.168.8.0/24
+        - subnet: ${MACVLAN_IPV4_SUBNET}
