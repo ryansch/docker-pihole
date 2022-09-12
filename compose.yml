@@ -41,9 +41,7 @@ services:
         ipv4_address: ${MACVLAN_IPV4_ADDRESS}
 
   proxy-dns:
-    build:
-      context: .
-      dockerfile: Dockerfile.cloudflared
+    image: cloudflared/cloudflared:2022.9.0-arm64
     command: proxy-dns --port=5053 --max-upstream-conns 50
     environment:
       TUNNEL_DNS_UPSTREAM:
