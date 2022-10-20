@@ -34,6 +34,11 @@ echo \
 
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# Pin this pi's DNS to something other than the pi hole.
+sudo echo "DNS=1.1.1.1" >> /etc/systemd/resolved.conf
+sudo echo "FallbackDNS=8.8.8.8" >> /etc/systemd/resolved.conf
+sudo systemctl restart systemd-resolved
 ```
 
 ## Container Time
