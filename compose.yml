@@ -41,7 +41,7 @@ services:
         ipv4_address: ${MACVLAN_IPV4_ADDRESS}
 
   proxy-dns:
-    image: cloudflare/cloudflared:2022.11.1-arm64
+    image: cloudflare/cloudflared:2022.12.1-arm64
     command: proxy-dns --port=5053 --max-upstream-conns 50
     environment:
       TUNNEL_DNS_UPSTREAM:
