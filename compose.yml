@@ -10,6 +10,7 @@
 # REV_SERVER_CIDR=CHANGEME
 # WEBPASSWORD=CHANGEME
 # TUNNEL_DNS_UPSTREAM=CHANGEME
+# VIRTUAL_HOST=pi.hole
 
 services:
   pihole:
@@ -25,6 +26,7 @@ services:
       REV_SERVER_TARGET:
       REV_SERVER_DOMAIN:
       REV_SERVER_CIDR:
+      VIRTUAL_HOST:
     volumes:
       - 'pihole:/etc/pihole/'
       - 'dnsmasq:/etc/dnsmasq.d/'
