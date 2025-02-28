@@ -37,14 +37,6 @@ services:
       macvlan:
         ipv4_address: ${MACVLAN_IPV4_ADDRESS}
 
-  # proxy-dns:
-  #   image: cloudflare/cloudflared:latest
-  #   command: proxy-dns --port=5053 --max-upstream-conns 50
-  #   environment:
-  #     TUNNEL_DNS_UPSTREAM:
-  #   restart: always
-  #   network_mode: "container:pihole"
-
   nextdns:
     image: zydou/nextdns:latest
     environment:
