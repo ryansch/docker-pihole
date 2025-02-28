@@ -4,13 +4,8 @@
 # TZ=CHANGEME
 # MACVLAN_IPV4_ADDRESS=CHANGEME
 # MACVLAN_IPV4_SUBNET=CHANGEME
-# FTLCONF_LOCAL_IPV4=CHANGEME
-# REV_SERVER_TARGET=CHANGEME
-# REV_SERVER_DOMAIN=lan
-# REV_SERVER_CIDR=CHANGEME
-# WEBPASSWORD=CHANGEME
-# TUNNEL_DNS_UPSTREAM=CHANGEME
-# VIRTUAL_HOST=pi.hole
+# FTLCONF_dns_revServers=CHANGEME
+# FTLCONF_webserver_api_password=CHANGEME
 
 services:
   pihole:
@@ -18,35 +13,43 @@ services:
     image: pihole/pihole:latest
     environment:
       TZ:
-      WEBPASSWORD:
-      FTLCONF_LOCAL_IPV4:
-      PIHOLE_DNS_: 127.0.0.1#5053
-      DNSSEC: "true"
-      REV_SERVER: "true"
-      REV_SERVER_TARGET:
-      REV_SERVER_DOMAIN:
-      REV_SERVER_CIDR:
-      VIRTUAL_HOST:
+      FTLCONF_webserver_api_password:
+      FTLCONF_dns_upstreams: 127.0.0.1#5053
+      FTLCONF_dns_dnssec: "true"
+      FTLCONF_dns_revServers:
     volumes:
-      - 'pihole:/etc/pihole/'
-      - 'dnsmasq:/etc/dnsmasq.d/'
+      - "pihole:/etc/pihole/"
+      # Uncomment the below if you have custom dnsmasq config files that you want to persist. Not needed for most starting fresh with Pi-hole v6. If you're upgrading from v5 you and have used this directory before, you should keep it enabled for the first v6 container start to allow for a complete migration. It can be removed afterwards. Needs environment variable FTLCONF_misc_etc_dnsmasq_d: 'true'
+      #- './etc-dnsmasq.d:/etc/dnsmasq.d'
     dns:
       - 127.0.0.1
       - 1.1.1.1
-    # Recommended but not required (DHCP needs NET_ADMIN)
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
+      # See https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+      # Required if you are using Pi-hole as your DHCP server, else not needed
       - NET_ADMIN
-    restart: always
+      # Required if you are using Pi-hole as your NTP client to be able to set the host's system time
+      - SYS_TIME
+      # Optional, if Pi-hole should get some more processing time
+      - SYS_NICE
+    restart: unless-stopped
     networks:
       macvlan:
         ipv4_address: ${MACVLAN_IPV4_ADDRESS}
 
-  proxy-dns:
-    image: cloudflare/cloudflared:latest
-    command: proxy-dns --port=5053 --max-upstream-conns 50
+  # proxy-dns:
+  #   image: cloudflare/cloudflared:latest
+  #   command: proxy-dns --port=5053 --max-upstream-conns 50
+  #   environment:
+  #     TUNNEL_DNS_UPSTREAM:
+  #   restart: always
+  #   network_mode: "container:pihole"
+
+  nextdns:
+    image: zydou/nextdns:latest
     environment:
-      TUNNEL_DNS_UPSTREAM:
+      NEXTDNS_ID: a1b532
+      NEXTDNS_ARGUMENTS: "-listen :5053 -report-client-info"
     restart: always
     network_mode: "container:pihole"
 

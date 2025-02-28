@@ -1,12 +1,12 @@
-# Pihole + macvlan + cloudflared DoH + cloudflare gateway
+# Pihole + macvlan + NextDNS
 
-This repo sets up pihole with an upstream DoH connection to Cloudflare Gateway for custom traffic filtering.
+This repo sets up pihole with an upstream DoH connection to NextDNS for custom traffic filtering.
 
 I've set up my pihole container to have its own ip address to get around issues with opening port 53 and host networking.
-In this setup my pihole container runs on 192.168.8.4. Additionally, you need to set up a second container ip so the 
+In this setup my pihole container runs on 192.168.8.4. Additionally, you need to set up a second container ip so the
 container can talk to the raspberry pi itself; I've picked 192.168.8.20 for this purpose.
 
-It also places the cloudflared container directly into the pihole container's network so that pihole can query it over 127.0.0.1.
+It also places the NextDNS container directly into the pihole container's network so that pihole can query it over 127.0.0.1.
 
 The conditional forwarding setup assumes you have a dhcp server running on 192.168.8.1. I use this with a unifi security gateway.
 
@@ -45,14 +45,14 @@ sudo systemctl restart systemd-resolved
 
 ## Container Time
 
-Pull up https://github.com/pi-hole/docker-pi-hole#environment-variables so you can configure things here in a moment.
+Pull up <https://github.com/pi-hole/docker-pi-hole#environment-variables> so you can configure things here in a moment.
 
 ```sh
 # Place the other files in this repo into `/opt/pihole`
 cd /opt/pihole
-# Create `.env` file and replace CHANGEME values. You probably want to set up Cloudflare Zero Trust to grab the TUNNEL_DNS_UPSTREAM.
+# Create `.env` file and replace CHANGEME values. You probably want to set up NextDNS as your dns_revServer.
 # You should also change the 192.168.8.x subnet with the one your server/pi is running on. Make sure to set the macvlan ip (192.168.8.4 in this example) to something outside of your dhcp range.
 sudo systemctl enable --now /opt/pihole/pihole.service
 docker compose logs -f
-# Your pihole should be up and sending dns request through DoH to cloudflare!
+# Your pihole should be up and sending dns requests through DoH to NextDNS!
 ```
